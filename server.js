@@ -8,9 +8,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
-// Demo credentials (for testing only - never use in production!)
+// Demo credentials and in-memory users (for testing only - never use in production!)
 const VALID_USER = { username: 'testuser', password: 'Test123!' };
 const LOCKED_USER = { username: 'locked', password: 'Locked123!' };
+
+const users = new Map([
+  [VALID_USER.username, { ...VALID_USER, email: 'test@example.com' }],
+  [LOCKED_USER.username, { ...LOCKED_USER, email: 'locked@example.com' }],
+]);
 
 app.get('/', (req, res) => {
   res.redirect('/login');
@@ -30,14 +35,15 @@ app.post('/login', (req, res) => {
     });
   }
 
-  if (username === LOCKED_USER.username) {
+  if (username.trim() === LOCKED_USER.username) {
     return res.status(423).json({
       success: false,
       message: 'Account is locked. Please contact support.'
     });
   }
 
-  if (username === VALID_USER.username && password === VALID_USER.password) {
+  const user = users.get(username.trim());
+  if (user && user.password === password) {
     return res.json({
       success: true,
       message: 'Login successful',
@@ -53,6 +59,49 @@ app.post('/login', (req, res) => {
 
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+});
+
+app.get('/register', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'register.html'));
+});
+
+app.post('/register', (req, res) => {
+  const { username, email, password } = req.body;
+
+  if (!username || !email || !password) {
+    return res.status(400).json({
+      success: false,
+      message: 'Username, email and password are required'
+    });
+  }
+
+  if (username.trim().length === 0 || email.trim().length === 0) {
+    return res.status(400).json({
+      success: false,
+      message: 'Username and email cannot be empty'
+    });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({
+      success: false,
+      message: 'Password must be at least 6 characters'
+    });
+  }
+
+  if (users.has(username.trim())) {
+    return res.status(409).json({
+      success: false,
+      message: 'Username already exists'
+    });
+  }
+
+  users.set(username.trim(), { username: username.trim(), email: email.trim(), password });
+  return res.status(201).json({
+    success: true,
+    message: 'Registration successful. You can now sign in.',
+    redirectUrl: '/login'
+  });
 });
 
 app.listen(PORT, () => {

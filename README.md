@@ -19,12 +19,15 @@ npm test
 
 ```
 example-case/
-├── server.js              # Express login server
+├── server.js              # Express server (login, logout, registration)
 ├── public/
 │   ├── login.html         # Login page
+│   ├── register.html      # Registration page
 │   └── dashboard.html     # Post-login dashboard
 ├── tests/
-│   └── login.spec.js      # Playwright E2E tests
+│   ├── login.spec.js      # Login E2E tests
+│   ├── logout.spec.js     # Logout E2E tests
+│   └── registration.spec.js  # Registration E2E tests
 ├── playwright.config.js   # Playwright configuration
 ├── .github/workflows/
 │   └── playwright.yml     # GitHub Actions CI
@@ -33,12 +36,27 @@ example-case/
 
 ## Test Scenarios
 
+### Login
 | Test | Flow | Expected |
 |------|------|----------|
 | Valid login | `testuser` / `Test123!` | Redirect to dashboard |
 | Invalid login | Wrong credentials | Error message |
 | Empty credentials | Submit empty form | Validation |
 | Locked account | `locked` / `Locked123!` | Account locked message |
+
+### Logout
+| Test | Flow | Expected |
+|------|------|----------|
+| Sign out | Click Sign out from dashboard | Redirect to login |
+| Re-login | Logout then login again | Success |
+
+### Registration
+| Test | Flow | Expected |
+|------|------|----------|
+| Valid registration | New username, email, password | Redirect to login |
+| Duplicate username | Use existing username | Error message |
+| Passwords mismatch | Different password/confirm | Error message |
+| Short password | &lt; 6 characters | Error message |
 
 ## CI Pipeline
 
@@ -63,3 +81,4 @@ npm start             # Start server only (for manual testing)
 <!-- Small comment: Safe for PR review, just updating docs. -->
 We are just updating to test the CI
 ## Update
+## Again
