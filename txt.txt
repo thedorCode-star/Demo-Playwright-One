@@ -1,0 +1,5 @@
+I am testing:
+As a QA engineer, you need to create an end to end UI test for a Node.js web application's login page using playwright, and integrate a GitHub Action CI pipeline.
+- Write a sample playwright test script that checks valid and invalid logins flows
+- Write a Github Actions workflow YAML that triggers on pull request, runs the playwright test, and publishes pass/fail results
+- Write a brief explanation of how test result are collected and reported back to the team

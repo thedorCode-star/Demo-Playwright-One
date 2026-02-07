@@ -1,0 +1,17 @@
+{
+  "name": "login-e2e-test-example",
+  "version": "1.0.0",
+  "description": "E2E UI tests for login page with Playwright and GitHub Actions CI",
+  "scripts": {
+    "start": "node server.js",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
